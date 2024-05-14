@@ -1,95 +1,91 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+import React, {useState} from 'react'
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 
-export default function Home() {
+
+export default function Page() {
+  const [image, setImage]=useState<string>('')
+  const [amount, setAmount]=useState<string>('')
+  const [sender, setSender]=useState<string>('')
+  const onImageChange=(event: React.ChangeEvent<HTMLInputElement>)=>{
+    if(event.target.files && event.target.files[0]){
+      console.log()
+      setImage(URL.createObjectURL  (event.target.files[0]))
+      event.target.form?.requestSubmit()
+    }
+  }
+  async function easyslip(formData: FormData){
+    const res=await fetch('/easyslip/api',{
+      method: 'POST',
+      body: formData
+    })
+    const data=await res.json()
+    console.log(data)
+    setAmount(data.data.data.amount.amount)
+    setSender(data.data.data.sender.account.name.th)
+  }
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+    <div>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Easyslip
+            </Typography>
+            {/* <Button color="inherit">Login</Button> */}
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <Container maxWidth="sm" sx={{marginTop: '10px'}}>
+        {image === '' ?
+        <Stack spacing={2}>
+          <Typography variant="h5" gutterBottom>
+            กรุณาอัพโหลดสลิป
+          </Typography>
+          <form action={easyslip}>
+            <Button component="label" variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />}>
+              อัพโหลดสลิป
+              <input type="file" id="file" name="file" 
+              onChange={onImageChange} style={{display: 'none'}}  />
+            </Button> 
+          </form>
+        </Stack>
+        :
+          <Card>
+            <CardMedia sx={{ height: 400, backgroundSize: 'contain' }} image={image} title="Slip Preview" />
+            <CardContent>
+              <Typography gutterBottom variant="body2" component="div">
+                ผู้โอน : {sender}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                จำนวนเงิน : {amount}
+              </Typography>
+            </CardContent>
+          </Card>
+        } 
+      </Container>
+    </div>
+  )
 }
