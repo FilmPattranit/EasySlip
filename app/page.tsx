@@ -39,6 +39,7 @@ export default function Page() {
   }
   return (
     <div>
+      
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
@@ -62,7 +63,7 @@ export default function Page() {
         {image === '' ?
         <Stack spacing={2}>
           <Typography variant="h5" gutterBottom>
-            กรุณาอัพโหลดสลิป
+            กรุณาอัพโหลดสลิปชำระเงิน
           </Typography>
           <form action={easyslip}>
             <Button component="label" variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />}>
